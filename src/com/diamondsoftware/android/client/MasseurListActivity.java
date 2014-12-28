@@ -233,12 +233,8 @@ public class MasseurListActivity extends Activity
 
 						@Override
 						public void run() {
-							ListFragment fm=(ListFragment)getFragmentManager().findFragmentById(R.id.masseur_list);
-					        fm.setListAdapter(new ArrayAdapter<Object>(
-					                MasseurListActivity.this,
-					                android.R.layout.simple_list_item_activated_1,
-					                android.R.id.text1,
-					                mAllMasseurs));
+							MasseurListFragment frag=(MasseurListFragment)getFragmentManager().findFragmentById(R.id.masseur_list);
+							frag.setListAdapter(mAllMasseurs);
 						//	ArrayAdapter<Object> aa=(ArrayAdapter<Object>)fm.getListAdapter(); // this doesn't work
 						//	aa.notifyDataSetChanged();
 						}

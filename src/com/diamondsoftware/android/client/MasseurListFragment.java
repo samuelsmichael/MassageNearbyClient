@@ -1,14 +1,23 @@
 package com.diamondsoftware.android.client;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.app.ListFragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.ListView;
 
 
 import com.diamondsoftware.android.client.dummy.DummyContent;
+import com.diamondsoftware.android.common.FileCache;
 
 /**
  * A list fragment representing a list of Masseur. This fragment
@@ -19,7 +28,7 @@ import com.diamondsoftware.android.client.dummy.DummyContent;
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-public class MasseurListFragment extends ListFragment {
+public class MasseurListFragment extends Fragment {
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -33,7 +42,41 @@ public class MasseurListFragment extends ListFragment {
      */
     private Callbacks mCallbacks = sDummyCallbacks;
 
-    /**
+    GridView mGridView;
+    
+    /* (non-Javadoc)
+	 * @see android.app.ListFragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
+	 */
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		ViewGroup viewGroup=(ViewGroup)inflater.inflate(R.layout.fragment_masseur_list, container,false);
+		mGridView= (GridView)viewGroup.findViewById(R.id.gridviewMasseurs);
+		mGridView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+		        // Notify the active callbacks interface (the activity, if the
+		        // fragment is attached to one) that an item has been selected.
+		        mCallbacks.onItemSelected(String.valueOf(((MasseurListActivity)getActivity()).getMasseurInPosition(position).getmUserId()));
+			}
+			
+		});
+		return mGridView;
+	}
+	public void setListAdapter(ArrayList<Object> items) {
+		if(mGridView!=null) {
+			mGridView.setAdapter(
+					new MasseurListAdapter(
+							MasseurListFragment.this.getActivity(), items
+							));
+
+		}
+	}
+
+
+	/**
      * The current activated item position. Only used on tablets.
      */
     private int mActivatedPosition = ListView.INVALID_POSITION;
@@ -70,15 +113,8 @@ public class MasseurListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+ //////////////       new FileCache(getActivity()).clear();
 
-        // TODO: replace with a real list adapter.
-        
-        setListAdapter(new ArrayAdapter<Object>(
-                getActivity(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
-                ((MasseurListActivity)getActivity()).mAllMasseurs));
-          
     }
 
     @Override
@@ -113,15 +149,6 @@ public class MasseurListFragment extends ListFragment {
     }
 
     @Override
-    public void onListItemClick(ListView listView, View view, int position, long id) {
-        super.onListItemClick(listView, view, position, id);
-
-        // Notify the active callbacks interface (the activity, if the
-        // fragment is attached to one) that an item has been selected.
-        mCallbacks.onItemSelected(String.valueOf(((MasseurListActivity)getActivity()).getMasseurInPosition(position).getmUserId()));
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (mActivatedPosition != ListView.INVALID_POSITION) {
@@ -137,16 +164,16 @@ public class MasseurListFragment extends ListFragment {
     public void setActivateOnItemClick(boolean activateOnItemClick) {
         // When setting CHOICE_MODE_SINGLE, ListView will automatically
         // give items the 'activated' state when touched.
-        getListView().setChoiceMode(activateOnItemClick
+        mGridView.setChoiceMode(activateOnItemClick
                 ? ListView.CHOICE_MODE_SINGLE
                 : ListView.CHOICE_MODE_NONE);
     }
 
     private void setActivatedPosition(int position) {
         if (position == ListView.INVALID_POSITION) {
-            getListView().setItemChecked(mActivatedPosition, false);
+            mGridView.setItemChecked(mActivatedPosition, false);
         } else {
-            getListView().setItemChecked(position, true);
+            mGridView.setItemChecked(position, true);
         }
 
         mActivatedPosition = position;

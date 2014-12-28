@@ -6,8 +6,10 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Random;
 
-import org.acra.ReportingInteractionMode;
+
+import org.acra.ACRA;
 import org.acra.annotation.ReportsCrashes;
+import org.acra.ReportingInteractionMode;
 
 import com.diamondsoftware.android.massagenearby.common.SocketCommunicationsManager;
 import com.diamondsoftware.android.massagenearby.model.ItemClient;
@@ -29,6 +31,17 @@ import android.app.Application;
 
 public class ApplicationClient extends Application {
 	
+	/* (non-Javadoc)
+	 * @see android.app.Application#onCreate()
+	 */
+	@Override
+	public void onCreate() {
+		// TODO Auto-generated method stub
+		super.onCreate();
+
+        // The following line triggers the initialization of ACRA
+        ACRA.init(this);		
+	}
 	public static final int SERVERPORT = 8080;
 	public static final int NETWORK_STATUS_POLLING_INTERVAL_IN_MILLISECONDS=5000;
 	

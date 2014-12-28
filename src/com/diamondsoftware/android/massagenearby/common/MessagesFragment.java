@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 import com.diamondsoftware.android.client.ApplicationClient;
 import com.diamondsoftware.android.client.DataProvider;
@@ -37,6 +38,7 @@ import android.widget.TextView;
 public class MessagesFragment extends android.support.v4.app.ListFragment implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor> {
 	
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private static final DateFormat sdfU= new SimpleDateFormat("MM/dd/yyyy HH:mm:ss Z");
 	private static final DateFormat[] df = new DateFormat[] {
 		DateFormat.getDateInstance(), DateFormat.getTimeInstance()};
 
@@ -100,7 +102,8 @@ public class MessagesFragment extends android.support.v4.app.ListFragment implem
 					
 				case R.id.text2:
 					TextView timeText = (TextView) view;
-					timeText.setText(getDisplayTime(cursor.getString(columnIndex)));
+					String dateTimeString=cursor.getString(columnIndex);
+					timeText.setText(getDisplayTime(dateTimeString));
 					return true;
 					
 							
@@ -155,6 +158,9 @@ public class MessagesFragment extends android.support.v4.app.ListFragment implem
 	private String getDisplayTime(String datetime) {
 		try {
 			Date dt = sdf.parse(datetime);
+			TimeZone tz=TimeZone.getDefault();
+			int offset = tz.getOffset(dt.getTime());
+			dt.setTime(dt.getTime()+offset);
 			if (now.getYear()==dt.getYear() && now.getMonth()==dt.getMonth() && now.getDate()==dt.getDate()) {
 				return df[1].format(dt);
 			}
